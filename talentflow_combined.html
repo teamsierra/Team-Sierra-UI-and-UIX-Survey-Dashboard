@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TalentFlow — Research Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0b;
+    --ink2: #1c1c18;
+    --surface: #f7f6f2;
+    --card: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --blue: #1757a0;
+    --blue-mid: #2873c9;
+    --blue-lt: #d4e6fa;
+    --amber: #b8700f;
+    --amber-mid: #e08c18;
+    --amber-lt: #fde8bc;
+    --green: #2d6110;
+    --green-lt: #cce8b4;
+    --purple: #4a42ad;
+    --purple-lt: #dddaf7;
+    --muted: #6b6a65;
+    --hint: #a09e97;
+    --accent: #1757a0;
+    --track: #ede9e1;
+    --r: 10px;
+    --r-sm: 6px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Georgia", "Times New Roman", serif;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem;
+    height: 52px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-logo {
+    font-family: "Georgia", serif;
+    font-size: 15px; font-weight: bold; letter-spacing: .02em;
+    color: #fff; white-space: nowrap;
+  }
+  .nav-logo span { color: #e08c18; }
+
+  .nav-pill {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+    border-radius: 20px; padding: 4px 12px; letter-spacing: .03em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink2);
+    color: white;
+    padding: 4rem 2rem 3rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 0%, rgba(23,87,160,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 100%, rgba(184,112,15,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1080px; margin: 0 auto; position: relative; }
+  .hero-tag {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: #e08c18; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;
+  }
+  .hero-tag::before { content: ''; display: block; width: 24px; height: 1px; background: #e08c18; }
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 44px); font-weight: bold; line-height: 1.15;
+    letter-spacing: -.02em; margin-bottom: .75rem; color: #fff;
+  }
+  .hero-sub {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 14px; color: rgba(255,255,255,0.5); max-width: 520px;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, auto); gap: 0;
+    margin-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;
+    width: fit-content;
+  }
+  .hero-stat { padding: 0 2.5rem 0 0; margin-right: 2.5rem; border-right: 1px solid rgba(255,255,255,0.1); }
+  .hero-stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+  .hero-stat-val {
+    font-size: 30px; font-weight: bold; letter-spacing: -.03em; color: #fff;
+    line-height: 1;
+  }
+  .hero-stat-val span { color: #e08c18; font-size: 18px; }
+  .hero-stat-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: .03em;
+  }
+
+  /* ── LAYOUT ── */
+  .main { max-width: 1080px; margin: 0 auto; padding: 3rem 2rem; }
+  .section { margin-bottom: 4rem; }
+  .section-header {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 1.5rem; padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border2);
+  }
+  .section-num {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    color: var(--amber); background: var(--amber-lt);
+    border-radius: 4px; padding: 2px 7px;
+  }
+  .section-title-text {
+    font-size: 18px; font-weight: bold; letter-spacing: -.015em; color: var(--ink);
+  }
+  .section-desc {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 13px; color: var(--hint); margin-left: auto;
+  }
+
+  /* ── CARDS ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 2rem; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 1.25rem 1.5rem;
+  }
+  .card-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--hint); margin-bottom: 1.1rem;
+  }
+
+  /* ── METRIC CARDS ── */
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 1.1rem 1.25rem;
+    position: relative; overflow: hidden;
+  }
+  .metric-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+  }
+  .metric-card.amber::after { background: var(--amber); }
+  .metric-card.green::after { background: var(--green); }
+  .metric-card.purple::after { background: var(--purple); }
+  .metric-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--hint); margin-bottom: 6px;
+  }
+  .metric-value { font-size: 24px; font-weight: bold; letter-spacing: -.02em; color: var(--ink); line-height: 1.1; }
+  .metric-sub {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; color: var(--hint); margin-top: 3px;
+  }
+
+  /* ── BARS ── */
+  .bar-group { display: flex; flex-direction: column; gap: 9px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    width: 120px; flex-shrink: 0; text-align: right; font-size: 11px; color: var(--muted);
+  }
+  .bar-label.wide { width: 145px; }
+  .bar-track { flex: 1; background: var(--track); border-radius: 4px; height: 22px; overflow: hidden; }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    display: flex; align-items: center; padding-left: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-count {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; color: var(--hint); width: 22px; text-align: right; flex-shrink: 0;
+  }
+
+  /* ── SCORE BARS ── */
+  .score-group { display: flex; flex-direction: column; gap: 10px; }
+  .score-row { display: flex; align-items: center; gap: 10px; }
+  .score-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; color: var(--muted); width: 155px; flex-shrink: 0;
+  }
+  .score-track { flex: 1; background: var(--track); border-radius: 20px; height: 8px; }
+  .score-fill { height: 100%; border-radius: 20px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+  .score-val {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; font-weight: 700; color: var(--ink); width: 32px;
+  }
+
+  /* ── DOT MATRIX ── */
+  .feature-list { display: flex; flex-direction: column; gap: 11px; }
+  .feature-row { display: flex; align-items: center; gap: 12px; }
+  .feature-name {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; color: var(--muted); flex: 1;
+  }
+  .dot-track { display: flex; gap: 5px; }
+  .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--track); border: 1px solid var(--border2);
+    transition: background .3s, transform .3s;
+  }
+  .dot.on { background: var(--blue); border-color: var(--blue); }
+  .feature-pct {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 700; color: var(--blue); width: 30px; text-align: right;
+  }
+
+  /* ── QUOTES ── */
+  .quote-card {
+    border-left: 3px solid var(--blue); padding: 10px 14px;
+    background: #f0f6fe; border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    font-size: 13px; color: var(--muted); font-style: italic; line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  /* ── TAGS ── */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: var(--track); color: var(--muted); border: 1px solid var(--border2);
+  }
+  .tag.hot { background: #fde8bc; color: #7a4a0a; border-color: #f5c76d; }
+  .tag.blue { background: var(--blue-lt); color: #0f4a8a; border-color: #90bcf0; }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    background: #edf5ff; border: 1px solid #90bcf0; border-radius: var(--r);
+    padding: 1rem 1.25rem; margin-top: 12px;
+  }
+  .insight-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 4px;
+  }
+  .insight p {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 13px; color: #1a4a80; line-height: 1.6;
+  }
+
+  /* ── COMBINED INSIGHTS ── */
+  .synthesis {
+    background: var(--ink2); color: white;
+    border-radius: var(--r); padding: 2rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .synthesis::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 100% 0%, rgba(23,87,160,0.3) 0%, transparent 55%),
+                radial-gradient(ellipse at 0% 100%, rgba(184,112,15,0.2) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .synthesis-inner { position: relative; }
+  .synthesis-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--amber-mid); margin-bottom: 1.25rem;
+  }
+  .synthesis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 1.5rem; }
+  .synth-card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--r-sm); padding: 1rem 1.25rem;
+  }
+  .synth-card-num {
+    font-size: 28px; font-weight: bold; color: var(--amber-mid);
+    letter-spacing: -.03em; line-height: 1;
+  }
+  .synth-card-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9);
+    margin: 6px 0 4px;
+  }
+  .synth-card-desc {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 0 0 2rem; }
+
+  /* ── PLATFORM INSPIRATION ── */
+  .platform-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
+  .platform-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: .875rem 1rem; text-align: center;
+  }
+  .platform-name {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px;
+  }
+  .platform-votes {
+    font-size: 22px; font-weight: bold; color: var(--blue); letter-spacing: -.02em;
+  }
+  .platform-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 10px; color: var(--hint); text-transform: uppercase; letter-spacing: .05em;
+  }
+  .platform-card.top { border-color: var(--blue-lt); background: #f3f8ff; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); color: rgba(255,255,255,0.35);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 12px; text-align: center;
+    padding: 1.5rem 2rem;
+  }
+  footer span { color: rgba(255,255,255,0.6); }
+
+  /* ── SURVEY BADGE ── */
+  .survey-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px 4px 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    font-size: 11px; color: var(--muted); margin-bottom: 1rem;
+  }
+  .survey-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+  .survey-badge-dot.amber { background: var(--amber); }
+
+  /* ── PAIN POINTS ── */
+  .pain-chip {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    display: inline-block; font-size: 12px; padding: 6px 14px;
+    background: #fff8f0; border: 1px solid #f5c76d;
+    border-radius: 20px; color: #7a4a0a; margin: 4px 3px;
+  }
+
+  @media (max-width: 720px) {
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+    .synthesis-grid { grid-template-columns: 1fr; }
+    .platform-grid { grid-template-columns: repeat(2,1fr); }
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .hero-stat { border-right: none; margin-right: 0; padding-right: 0; margin-bottom: 1rem; }
+
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Talent<span>Flow</span></div>
+
+  <div class="nav-pill">March 2026</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="overview">
+  <div class="hero-inner">
+    <div class="hero-tag">Design Research Report</div>
+    <h1>What should TalentFlow<br>look and feel like?</h1>
+    <p class="hero-sub">Two research surveys — UI visual preferences and UX functional needs — synthesised into a single design direction.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">20</div>
+        <div class="hero-stat-label">Total respondents</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">2</div>
+        <div class="hero-stat-label">Surveys conducted</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">4.5<span>/5</span></div>
+        <div class="hero-stat-label">One-platform importance</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">57<span>%</span></div>
+        <div class="hero-stat-label">Want clean & minimal UI</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ─────────────────────────────────────────────────── UI RESEARCH -->
+<div class="section" id="ui">
+  <div class="section-header">
+    <span class="section-num">UI</span>
+    <span class="section-title-text">Visual Design Preferences</span>
+    <span class="section-desc">14 respondents · Learners & interns</span>
+  </div>
+
+  <div class="grid4">
+    <div class="metric-card">
+      <div class="metric-label">Top visual style</div>
+      <div class="metric-value">Clean</div>
+      <div class="metric-sub">57% prefer minimal</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Top colour palette</div>
+      <div class="metric-value">Blue & white</div>
+      <div class="metric-sub">57% of votes</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-label">Avg readability score</div>
+      <div class="metric-value">4.5 / 5</div>
+      <div class="metric-sub">Highest priority</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-label">Avg badge importance</div>
+      <div class="metric-value">4.5 / 5</div>
+      <div class="metric-sub">Tied top</div>
+    </div>
+  </div>
+
+  <!-- Row 1 -->
+  <div class="grid3" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Visual style</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Clean & minimal</div><div class="bar-track"><div class="bar-fill" style="width:57%;background:#1757a0;color:#d4e6fa">57%</div></div><div class="bar-count">8</div></div>
+        <div class="bar-row"><div class="bar-label">Warm & friendly</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#b8700f;color:#fde8bc">21%</div></div><div class="bar-count">3</div></div>
+        <div class="bar-row"><div class="bar-label">Corporate & formal</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#4a42ad;color:#dddaf7">21%</div></div><div class="bar-count">3</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Colour palette</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Blue & white</div><div class="bar-track"><div class="bar-fill" style="width:57%;background:#1757a0;color:#d4e6fa">57%</div></div><div class="bar-count">8</div></div>
+        <div class="bar-row"><div class="bar-label">Dark navy & amber</div><div class="bar-track"><div class="bar-fill" style="width:36%;background:#2c2a7a;color:#dddaf7">36%</div></div><div class="bar-count">5</div></div>
+        <div class="bar-row"><div class="bar-label">Green & white</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#2d6110;color:#cce8b4">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Display mode</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Light mode</div><div class="bar-track"><div class="bar-fill" style="width:36%;background:#b8700f;color:#fde8bc">36%</div></div><div class="bar-count">5</div></div>
+        <div class="bar-row"><div class="bar-label">Dark mode</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#3a3a36;color:#d0cfc8">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">System default</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#888780;color:#f0ede6">21%</div></div><div class="bar-count">3</div></div>
+        <div class="bar-row"><div class="bar-label">No preference</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#b4b2a9;color:#444">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Font personality</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Clean & geometric</div><div class="bar-track"><div class="bar-fill" style="width:36%;background:#1757a0;color:#d4e6fa">36%</div></div><div class="bar-count">5</div></div>
+        <div class="bar-row"><div class="bar-label">Classic serif</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#4a42ad;color:#dddaf7">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">Rounded & soft</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#b8700f;color:#fde8bc">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">Bold & technical</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#8b3a20;color:#fac4b0">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Importance scores (out of 5)</div>
+      <div class="score-group">
+        <div class="score-row"><div class="score-label">Readability</div><div class="score-track"><div class="score-fill" style="width:90%;background:#1757a0"></div></div><div class="score-val">4.5</div></div>
+        <div class="score-row"><div class="score-label">Badges & achievements</div><div class="score-track"><div class="score-fill" style="width:90%;background:#2d6110"></div></div><div class="score-val">4.5</div></div>
+        <div class="score-row"><div class="score-label">Visual engagement</div><div class="score-track"><div class="score-fill" style="width:76%;background:#4a42ad"></div></div><div class="score-val">3.8</div></div>
+        <div class="score-row"><div class="score-label">Certificate quality</div><div class="score-track"><div class="score-fill" style="width:76%;background:#b8700f"></div></div><div class="score-val">3.8</div></div>
+        <div class="score-row"><div class="score-label">Mobile optimisation</div><div class="score-track"><div class="score-fill" style="width:74%;background:#8b3a20"></div></div><div class="score-val">3.7</div></div>
+        <div class="score-row"><div class="score-label">Visual excitement</div><div class="score-track"><div class="score-fill" style="width:66%;background:#888780"></div></div><div class="score-val">3.3</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3 – Nav & Layout -->
+  <div class="grid3" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Desktop navigation</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Left sidebar</div><div class="bar-track"><div class="bar-fill" style="width:57%;background:#1757a0;color:#d4e6fa">57%</div></div><div class="bar-count">8</div></div>
+        <div class="bar-row"><div class="bar-label">Top nav bar</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#4a42ad;color:#dddaf7">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">No preference</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#888780;color:#f0ede6">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Mobile navigation</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Bottom tab bar</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#1757a0;color:#d4e6fa">43%</div></div><div class="bar-count">6</div></div>
+        <div class="bar-row"><div class="bar-label">Hamburger menu</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#4a42ad;color:#dddaf7">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">Top nav bar</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#b8700f;color:#fde8bc">14%</div></div><div class="bar-count">2</div></div>
+        <div class="bar-row"><div class="bar-label">No preference</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#888780;color:#f0ede6">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Course browse layout</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Grid of cards</div><div class="bar-track"><div class="bar-fill" style="width:57%;background:#1757a0;color:#d4e6fa">57%</div></div><div class="bar-count">8</div></div>
+        <div class="bar-row"><div class="bar-label">Vertical list</div><div class="bar-track"><div class="bar-fill" style="width:29%;background:#4a42ad;color:#dddaf7">29%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">No preference</div><div class="bar-track"><div class="bar-fill" style="width:7%;background:#888780;color:#f0ede6">7%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4 – Notifications / Progress / Platform -->
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Notification style</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Notification bell</div><div class="bar-track"><div class="bar-fill" style="width:36%;background:#1757a0;color:#d4e6fa">36%</div></div></div>
+        <div class="bar-row"><div class="bar-label">In-app toast</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#b8700f;color:#fde8bc">21%</div></div></div>
+        <div class="bar-row"><div class="bar-label">Banner at top</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#2d6110;color:#cce8b4">21%</div></div></div>
+        <div class="bar-row"><div class="bar-label">Pop-up</div><div class="bar-track"><div class="bar-fill" style="width:21%;background:#8b3a20;color:#fac4b0">21%</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Progress display format</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Percentage number</div><div class="bar-track"><div class="bar-fill" style="width:38%;background:#1757a0;color:#d4e6fa">38%</div></div></div>
+        <div class="bar-row"><div class="bar-label">Progress bar</div><div class="bar-track"><div class="bar-fill" style="width:31%;background:#2d6110;color:#cce8b4">31%</div></div></div>
+        <div class="bar-row"><div class="bar-label">Combination</div><div class="bar-track"><div class="bar-fill" style="width:23%;background:#4a42ad;color:#dddaf7">23%</div></div></div>
+        <div class="bar-row"><div class="bar-label">Circular ring</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:#b8700f;color:#fde8bc">8%</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform inspiration -->
+  <div class="card">
+    <div class="card-title">Platform inspiration — which should TalentFlow feel most like?</div>
+    <div class="platform-grid">
+      <div class="platform-card top">
+        <div class="platform-name">Duolingo</div>
+        <div class="platform-votes">4</div>
+        <div class="platform-label">votes</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">Google Classroom</div>
+        <div class="platform-votes" style="color:var(--muted);font-size:18px">3</div>
+        <div class="platform-label">votes</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">None of these</div>
+        <div class="platform-votes" style="color:var(--muted);font-size:18px">3</div>
+        <div class="platform-label">votes</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">LinkedIn</div>
+        <div class="platform-votes" style="color:var(--muted);font-size:18px">2</div>
+        <div class="platform-label">votes</div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-name">Notion</div>
+        <div class="platform-votes" style="color:var(--muted);font-size:18px">2</div>
+        <div class="platform-label">votes</div>
+      </div>
+    </div>
+    <div class="tag-row" style="margin-top:14px;">
+      <span style="font-family:-apple-system,sans-serif;font-size:11px;color:var(--hint);margin-right:4px;">Open-text mentions:</span>
+      <span class="tag blue">Linear — clean & focused</span>
+      <span class="tag blue">Udemy — familiar learning UX</span>
+      <span class="tag blue">WhatsApp — simple nav</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────── UX RESEARCH -->
+<div class="section" id="ux">
+  <div class="section-header">
+    <span class="section-num">UX</span>
+    <span class="section-title-text">Functional Needs & Behaviours</span>
+    <span class="section-desc">6 respondents · All interns</span>
+  </div>
+
+  <div class="grid4" style="margin-bottom:14px;">
+    <div class="metric-card">
+      <div class="metric-label">Respondents</div>
+      <div class="metric-value">6</div>
+      <div class="metric-sub">All interns</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Avg. collab score</div>
+      <div class="metric-value">6.5 / 10</div>
+      <div class="metric-sub">Room to improve</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-label">Track progress today</div>
+      <div class="metric-value">33%</div>
+      <div class="metric-sub">Only 2 of 6 do it</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-label">One-platform score</div>
+      <div class="metric-value">4.5 / 5</div>
+      <div class="metric-sub">Highest rated need</div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Learning frequency</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">Daily</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#1757a0;color:#d4e6fa">17%</div></div><div class="bar-count">1</div></div>
+        <div class="bar-row"><div class="bar-label">Weekly</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#1757a0;color:#d4e6fa">50%</div></div><div class="bar-count">3</div></div>
+        <div class="bar-row"><div class="bar-label">Monthly</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#4a42ad;color:#dddaf7">33%</div></div><div class="bar-count">2</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Current tools used</div>
+      <div class="bar-group">
+        <div class="bar-row"><div class="bar-label">WhatsApp</div><div class="bar-track"><div class="bar-fill" style="width:67%;background:#2d6110;color:#cce8b4">67%</div></div><div class="bar-count">4</div></div>
+        <div class="bar-row"><div class="bar-label">Google Drive</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:#1757a0;color:#d4e6fa">50%</div></div><div class="bar-count">3</div></div>
+        <div class="bar-row"><div class="bar-label">Slack / Discord</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#4a42ad;color:#dddaf7">33%</div></div><div class="bar-count">2</div></div>
+        <div class="bar-row"><div class="bar-label">Teams / Zoom</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#b8700f;color:#fde8bc">17%</div></div><div class="bar-count">1</div></div>
+        <div class="bar-row"><div class="bar-label">LMS platforms</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#888780;color:#f0ede6">17%</div></div><div class="bar-count">1</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Experience scores</div>
+      <div class="score-group">
+        <div class="score-row"><div class="score-label">One platform importance</div><div class="score-track"><div class="score-fill" style="width:90%;background:#1757a0"></div></div><div class="score-val">4.5</div></div>
+        <div class="score-row"><div class="score-label">Find learning materials</div><div class="score-track"><div class="score-fill" style="width:76%;background:#2d6110"></div></div><div class="score-val">3.8</div></div>
+        <div class="score-row"><div class="score-label">Collab rating</div><div class="score-track"><div class="score-fill" style="width:65%;background:#b8700f"></div></div><div class="score-val">6.5</div></div>
+        <div class="score-row"><div class="score-label">Track progress ease</div><div class="score-track"><div class="score-fill" style="width:60%;background:#8b3a20"></div></div><div class="score-val">3.0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Most wanted features (up to 3 per person, n=6)</div>
+      <div class="feature-list">
+        <div class="feature-row">
+          <div class="feature-name">Collaboration tools</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div>
+          <div class="feature-pct">83%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">Centralized learning materials</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div>
+          <div class="feature-pct">83%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">Project workspace</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div>
+          <div class="feature-pct">83%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">Progress tracking dashboard</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="feature-pct">67%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">Messaging / chat</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="feature-pct">67%</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">Notifications / reminders</div>
+          <div class="dot-track"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="feature-pct">67%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Collaboration pain points</div>
+      <div class="quote-card">"Internet and electricity issues"</div>
+      <div class="quote-card">"Network connection"</div>
+      <div class="quote-card">"Did not find my teammates"</div>
+      <div class="quote-card">"Differences in timezone and network connectivity"</div>
+      <div style="margin-top:12px;font-family:-apple-system,sans-serif;font-size:11px;color:var(--hint);margin-bottom:6px;">Top pain themes</div>
+      <span class="pain-chip">Connectivity & power</span>
+      <span class="pain-chip">Finding teammates</span>
+      <span class="pain-chip">Timezone gaps</span>
+      <div class="insight" style="margin-top:14px;">
+        <div class="insight-title">Opportunity</div>
+        <p>67% don't track progress today — TalentFlow can own this habit from day one with a simple, visible dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">If you could improve one thing…</div>
+    <div class="grid3" style="gap:10px;margin-top:4px;">
+      <div class="quote-card">"The learning materials"</div>
+      <div class="quote-card">"Teammates should be more organized"</div>
+      <div class="quote-card">"Color gradient" — better visual design</div>
+    </div>
+    <div class="tag-row" style="margin-top:10px;">
+      <span class="tag">Content quality</span>
+      <span class="tag">Team coordination</span>
+      <span class="tag">Visual polish</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────── INSIGHTS -->
+<div class="section" id="insights">
+  <div class="section-header">
+    <span class="section-num">↗</span>
+    <span class="section-title-text">Design Recommendations</span>
+    <span class="section-desc">UI + UX combined</span>
+  </div>
+
+  <div class="synthesis">
+    <div class="synthesis-inner">
+      <div class="synthesis-label">Combined findings</div>
+      <div style="font-size:20px;font-weight:bold;color:#fff;letter-spacing:-.02em;max-width:600px;line-height:1.3;">
+        Users want one clean, organised place to learn, collaborate, and track their growth.
+      </div>
+      <div class="synthesis-grid">
+        <div class="synth-card">
+          <div class="synth-card-num">4.5</div>
+          <div class="synth-card-title">Readability is non-negotiable</div>
+          <div class="synth-card-desc">Both surveys ranked it the highest. Font legibility and content clarity are hard constraints, not aesthetic choices.</div>
+        </div>
+        <div class="synth-card">
+          <div class="synth-card-num">83%</div>
+          <div class="synth-card-title">Collab, materials & workspace — tied top</div>
+          <div class="synth-card-desc">The three most-wanted UX features all tied at 5/6. Build these first, not as add-ons.</div>
+        </div>
+        <div class="synth-card">
+          <div class="synth-card-num">57%</div>
+          <div class="synth-card-title">Clean & minimal — clear winner</div>
+          <div class="synth-card-desc">Pair the blue & white palette with a left sidebar on desktop and a bottom tab bar on mobile. Grid of cards for course browsing.</div>
+        </div>
+        <div class="synth-card">
+          <div class="synth-card-num">67%</div>
+          <div class="synth-card-title">Progress tracking gap</div>
+          <div class="synth-card-desc">Most users don't track learning progress today. TalentFlow can own this habit — make the dashboard prominent and visual.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.1);">
+        <div style="font-family:-apple-system,sans-serif;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:.75rem;">What users said</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:.875rem;font-family:-apple-system,sans-serif;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.6;">"Make the certificate screen feel like the most special moment in the entire platform."</div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:.875rem;font-family:-apple-system,sans-serif;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.6;">"It feels like someone actually thought about me when they designed it."</div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:.875rem;font-family:-apple-system,sans-serif;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.6;">"Simple, minimalist and easy to navigate."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<footer>
+  <span>TalentFlow</span> — Design Research Report &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; 20 respondents across 2 surveys
+</footer>
+
+
+</body>
+</html>
